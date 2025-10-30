@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState, useEffect } from "react";
+import { use, useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -121,20 +121,24 @@ export default function SummaryPage(props: PageProps) {
     gcTime: 5 * 60 * 1000, // Keep in memory for 5 minutes only
   });
 
-  const canRefresh = () => {
-    if (!data?.lastUpdated) return true;
+  // Calculate refresh timing (memoized to avoid impure Date.now() calls during render)
+  const refreshInfo = useMemo(() => {
+    if (!data?.lastUpdated) {
+      return { canRefresh: true, hoursRemaining: 0 };
+    }
     const lastUpdate = new Date(data.lastUpdated).getTime();
     const now = Date.now();
     const hoursSinceUpdate = (now - lastUpdate) / (1000 * 60 * 60);
-    return hoursSinceUpdate >= 24;
-  };
+    const hoursRemaining = Math.ceil(24 - hoursSinceUpdate);
+    return {
+      canRefresh: hoursSinceUpdate >= 24,
+      hoursRemaining: Math.max(0, hoursRemaining),
+    };
+  }, [data?.lastUpdated]);
 
   const handleRefresh = async () => {
-    if (!canRefresh()) {
-      const lastUpdate = new Date(data.lastUpdated).getTime();
-      const now = Date.now();
-      const hoursRemaining = Math.ceil(24 - (now - lastUpdate) / (1000 * 60 * 60));
-      alert(`⏰ Data is cached. You can refresh in ${hoursRemaining} hour${hoursRemaining !== 1 ? 's' : ''}.\n\nThis saves AI processing costs! 💰`);
+    if (!refreshInfo.canRefresh) {
+      alert(`⏰ Data is cached. You can refresh in ${refreshInfo.hoursRemaining} hour${refreshInfo.hoursRemaining !== 1 ? 's' : ''}.\n\nThis saves AI processing costs! 💰`);
       return;
     }
     
@@ -312,9 +316,9 @@ export default function SummaryPage(props: PageProps) {
                 onClick={handleRefresh} 
                 variant="outline" 
                 size="sm" 
-                disabled={!canRefresh()}
-                className={`h-8 px-3 text-xs border-primary/40 text-primary hover:bg-primary/20 hover:border-primary/60 transition-all duration-300 font-semibold ${!canRefresh() ? 'opacity-50 cursor-not-allowed' : ''}`}
-                title={!canRefresh() ? `Available in ${Math.ceil(24 - (Date.now() - new Date(data?.lastUpdated).getTime()) / (1000 * 60 * 60))} hours` : 'Refresh data'}
+                disabled={!refreshInfo.canRefresh}
+                className={`h-8 px-3 text-xs border-primary/40 text-primary hover:bg-primary/20 hover:border-primary/60 transition-all duration-300 font-semibold ${!refreshInfo.canRefresh ? 'opacity-50 cursor-not-allowed' : ''}`}
+                title={!refreshInfo.canRefresh ? `Available in ${refreshInfo.hoursRemaining} hours` : 'Refresh data'}
               >
                 <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
                 REFRESH
@@ -482,7 +486,7 @@ export default function SummaryPage(props: PageProps) {
                 </div>
                 <div className="flex items-center gap-1.5 text-primary/80">
                   <Clock className="h-3 w-3 flex-shrink-0" />
-                  <span className="whitespace-nowrap">Refresh in {data.lastUpdated ? Math.ceil(24 - (Date.now() - new Date(data.lastUpdated).getTime()) / (1000 * 60 * 60)) : 24}h</span>
+                  <span className="whitespace-nowrap">Refresh in {refreshInfo.hoursRemaining || 24}h</span>
                 </div>
               </div>
             </CardContent>
@@ -811,12 +815,15 @@ export default function SummaryPage(props: PageProps) {
                 <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12 gap-2 relative">
                   {(() => {
                     // Get all months from timeline
-                    const allMonths = data.timeline.map((t: any) => t.month);
-                    const spikeMonths = new Set(data.spikeInsights.map((s: any) => s.month));
+                    type TimelineItem = { month: string; pos: number; neg: number; neu: number; score: number };
+                    type SpikeItem = { month: string; type: string; analysis: string; magnitude?: number; reviewCount?: number };
+                    
+                    const allMonths = data.timeline.map((t: TimelineItem) => t.month);
+                    const spikeMonths = new Set(data.spikeInsights.map((s: SpikeItem) => s.month));
                     
                     return allMonths.map((month: string) => {
-                      const monthData = data.timeline.find((t: any) => t.month === month);
-                      const spikeData = data.spikeInsights.find((s: any) => s.month === month);
+                      const monthData = data.timeline.find((t: TimelineItem) => t.month === month);
+                      const spikeData = data.spikeInsights.find((s: SpikeItem) => s.month === month);
                       const isSpike = spikeMonths.has(month);
                       const totalReviews = monthData ? monthData.pos + monthData.neg + monthData.neu : 0;
                       
@@ -899,7 +906,7 @@ export default function SummaryPage(props: PageProps) {
               
               {/* Detailed Spike Cards */}
               <div className="space-y-4">
-                {data.spikeInsights.map((spike: any, index: number) => {
+                {data.spikeInsights.map((spike: { month: string; type: string; analysis: string; magnitude?: number; reviewCount?: number }, index: number) => {
                   const monthName = new Date(spike.month + "-01").toLocaleDateString("en-US", {
                     month: "long",
                     year: "numeric",
@@ -1205,16 +1212,14 @@ function SearchModal({ onClose }: { onClose: () => void }) {
 
 // Settings Modal Component
 function SettingsModal({ onClose }: { onClose: () => void }) {
-  const [apiKey, setApiKey] = useState("");
-  const [saved, setSaved] = useState(false);
-
-  useEffect(() => {
-    // Load saved API key from localStorage
-    const savedKey = localStorage.getItem("user_openai_key");
-    if (savedKey) {
-      setApiKey(savedKey);
+  // Initialize state with lazy initialization to avoid setState in effect
+  const [apiKey, setApiKey] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem("user_openai_key") || "";
     }
-  }, []);
+    return "";
+  });
+  const [saved, setSaved] = useState(false);
 
   const handleSave = () => {
     if (apiKey.trim()) {

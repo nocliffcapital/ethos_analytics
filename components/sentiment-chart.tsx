@@ -140,19 +140,19 @@ export function SentimentChart({ data }: { data: TimelineData }) {
 
   // Calculate cumulative values and prepare chart data
   const chartData = useMemo(() => {
-    let cumulativePos = 0;
-    let cumulativeNeg = 0;
-    
-    return data.map(item => {
-      cumulativePos += item.pos;
-      cumulativeNeg += item.neg;
+    return data.reduce((acc, item, index) => {
+      const prevItem = acc[index - 1];
+      const cumulativePos = (prevItem?.cumulativePos || 0) + item.pos;
+      const cumulativeNeg = (prevItem?.cumulativeNeg || 0) + item.neg;
       
-      return {
+      acc.push({
         ...item,
         cumulativePos,
         cumulativeNeg,
-      };
-    });
+      });
+      
+      return acc;
+    }, [] as Array<typeof data[0] & { cumulativePos: number; cumulativeNeg: number }>);
   }, [data]);
 
   // Calculate totals for display
