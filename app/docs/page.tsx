@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { ArrowLeft, Zap, Database, Cpu, Shield, Clock, TrendingUp, MessageSquare, BarChart3, Code, Award, Calendar } from "lucide-react";
+import { ArrowLeft, Zap, Database, Cpu, Shield, TrendingUp, MessageSquare, BarChart3, Code, Award, Calendar } from "lucide-react";
 
 export default function DocsPage() {
   return (
@@ -570,7 +570,7 @@ export default function DocsPage() {
               <div>
                 <h3 className="text-sm font-bold text-foreground mb-2 uppercase tracking-wide">3. Set Up Environment</h3>
                 <div className="bg-black/30 rounded-lg p-3 font-mono text-xs text-success border border-success/20">
-                  echo "OPENAI_API_KEY=your_openai_api_key" {"> .env.local"}
+                  echo &quot;OPENAI_API_KEY=your_openai_api_key&quot; &gt; .env.local
                 </div>
                 <p className="text-xs text-muted-foreground mt-2">
                   Get your OpenAI API key from <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">platform.openai.com</a>

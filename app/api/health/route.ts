@@ -16,7 +16,7 @@ export async function GET() {
     // Check database
     await query("SELECT 1");
     health.services.database = "healthy";
-  } catch (error) {
+  } catch {
     health.services.database = "unhealthy";
     health.status = "degraded";
   }
@@ -26,7 +26,7 @@ export async function GET() {
     const redis = getRedis();
     await redis.ping();
     health.services.redis = "healthy";
-  } catch (error) {
+  } catch {
     health.services.redis = "unhealthy";
     health.status = "degraded";
   }

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Search } from "lucide-react";
 
 type Review = {
@@ -13,6 +13,7 @@ type Review = {
   comment?: string;
   createdAt: string;
   author: string;
+  authorTwitter?: string;
   votes?: {
     upvotes: number;
     downvotes: number;
@@ -69,7 +70,7 @@ export function ReviewsList({ userkey }: { userkey: string }) {
       {/* Filters Row */}
       <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
         <Tabs value={sentiment} onValueChange={(v) => {
-          setSentiment(v as any);
+          setSentiment(v as "all" | "POSITIVE" | "NEGATIVE" | "NEUTRAL");
           setOffset(0);
         }}>
           <TabsList className="bg-muted/50">
@@ -135,9 +136,9 @@ export function ReviewsList({ userkey }: { userkey: string }) {
                   <span className="text-xs text-muted-foreground font-mono">
                     {review.author}
                   </span>
-                  {(review as any).authorTwitter && (
+                  {review.authorTwitter && (
                     <a
-                      href={`https://x.com/${(review as any).authorTwitter}`}
+                      href={`https://x.com/${review.authorTwitter}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-xs text-primary hover:underline flex items-center gap-1"
@@ -145,7 +146,7 @@ export function ReviewsList({ userkey }: { userkey: string }) {
                       <svg className="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                       </svg>
-                      @{(review as any).authorTwitter}
+                      @{review.authorTwitter}
                     </a>
                   )}
                 </div>

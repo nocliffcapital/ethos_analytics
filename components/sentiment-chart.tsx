@@ -15,16 +15,27 @@ type TimelineData = Array<{
 type ChartFilter = "all" | "positive" | "negative" | "neutral" | "cumulative";
 
 // Custom Tooltip Component
-function CustomTooltip({ active, payload, label, filter }: any) {
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    dataKey: string;
+    value: number;
+    [key: string]: unknown;
+  }>;
+  label?: string;
+  filter?: ChartFilter;
+}
+
+function CustomTooltip({ active, payload, label, filter }: TooltipProps) {
   if (!active || !payload || !payload.length) return null;
 
   // Find the data point values
-  const positive = payload.find((p: any) => p.dataKey === "pos")?.value || 0;
-  const negative = payload.find((p: any) => p.dataKey === "neg")?.value || 0;
-  const neutral = payload.find((p: any) => p.dataKey === "neu")?.value || 0;
-  const score = payload.find((p: any) => p.dataKey === "score")?.value || 0;
-  const cumulativePos = payload.find((p: any) => p.dataKey === "cumulativePos")?.value || 0;
-  const cumulativeNeg = payload.find((p: any) => p.dataKey === "cumulativeNeg")?.value || 0;
+  const positive = payload.find((p) => p.dataKey === "pos")?.value || 0;
+  const negative = payload.find((p) => p.dataKey === "neg")?.value || 0;
+  const neutral = payload.find((p) => p.dataKey === "neu")?.value || 0;
+  const score = payload.find((p) => p.dataKey === "score")?.value || 0;
+  const cumulativePos = payload.find((p) => p.dataKey === "cumulativePos")?.value || 0;
+  const cumulativeNeg = payload.find((p) => p.dataKey === "cumulativeNeg")?.value || 0;
 
   // Format month name
   const monthName = new Date(label + "-01").toLocaleDateString("en-US", {

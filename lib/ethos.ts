@@ -511,7 +511,7 @@ export async function fetchProjectVotes(username: string): Promise<ProjectVoting
     }
 
     return null;
-  } catch (error) {
+  } catch {
     // Not all profiles are projects, so this is expected to fail sometimes
     console.log(`No project data found for ${username} (this is normal for non-projects)`);
     return null;

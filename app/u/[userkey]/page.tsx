@@ -6,13 +6,25 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2, RefreshCw, Search, TrendingUp, TrendingDown, Shield, ExternalLink, FileText, Award, BarChart3, MessageSquare, Crown, Sparkles, ThumbsUp, Meh, ThumbsDown, AlertTriangle, Clock, Settings, Calendar, HandHeart, ArrowLeft } from "lucide-react";
+import { Loader2, RefreshCw, Search, TrendingUp, TrendingDown, Shield, Award, BarChart3, MessageSquare, Crown, Sparkles, ThumbsUp, Meh, ThumbsDown, AlertTriangle, Clock, Settings, Calendar, HandHeart, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { SentimentChart } from "@/components/sentiment-chart";
 import { ReviewsList } from "@/components/reviews-list";
 
 type PageProps = {
   params: Promise<{ userkey: string }>;
+};
+
+type SearchItem = {
+  userkey: string;
+  username?: string;
+  displayName: string;
+  avatarUrl?: string;
+  score: number;
+  positiveReviewPercentage: number;
+  positiveReviewCount: number;
+  negativeReviewCount: number;
+  totalReviewCount: number;
 };
 
 export default function SummaryPage(props: PageProps) {
@@ -48,7 +60,7 @@ export default function SummaryPage(props: PageProps) {
     }, 1333); // Change message every ~1.33 seconds for 20 second total loop
 
     return () => clearInterval(interval);
-  }, []);
+  }, [loadingMessages.length]);
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["summary", userkey],
@@ -86,10 +98,10 @@ export default function SummaryPage(props: PageProps) {
           };
 
           const stored = localStorage.getItem("recent_searches");
-          let searches = stored ? JSON.parse(stored) : [];
+          let searches: SearchItem[] = stored ? JSON.parse(stored) : [];
           
           // Remove duplicate if exists
-          searches = searches.filter((s: any) => s.userkey !== searchItem.userkey);
+          searches = searches.filter((s) => s.userkey !== searchItem.userkey);
           
           // Add to beginning
           searches.unshift(searchItem);
