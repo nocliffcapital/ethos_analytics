@@ -425,20 +425,35 @@ export default function SummaryPage(props: PageProps) {
                   )}
                 </div>
                 <div className="text-left sm:text-right w-full sm:w-auto">
-                  <div className="relative inline-block">
-                    <div className="flex items-center gap-2 sm:gap-3 justify-start sm:justify-end mb-1">
-                      <div className="text-3xl sm:text-4xl font-black tracking-tighter bg-gradient-to-br from-primary via-primary to-primary/70 bg-clip-text text-transparent tabular-nums">
-                        {data.stats.pctPositive}%
-                      </div>
-                      {data.stats.pctPositive >= 90 ? <Crown className="h-6 w-6 sm:h-7 sm:w-7 text-primary" /> :
-                       data.stats.pctPositive >= 80 ? <Sparkles className="h-6 w-6 sm:h-7 sm:w-7 text-primary" /> :
-                       data.stats.pctPositive >= 70 ? <ThumbsUp className="h-6 w-6 sm:h-7 sm:w-7 text-primary" /> :
-                       data.stats.pctPositive >= 60 ? <Meh className="h-6 w-6 sm:h-7 sm:w-7 text-primary" /> :
-                       data.stats.pctPositive >= 40 ? <ThumbsDown className="h-6 w-6 sm:h-7 sm:w-7 text-primary" /> :
-                       <AlertTriangle className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
-                      }
+                  <div className="relative inline-flex flex-col items-start sm:items-end gap-2">
+                    {/* Label */}
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-1 h-1 bg-primary rounded-full"></div>
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Sentiment Score</span>
                     </div>
-                    <div className="absolute -inset-1 bg-primary/20 blur-xl rounded-full -z-10"></div>
+                    
+                    {/* Percentage Display */}
+                    <div className="flex items-center gap-2.5">
+                      {data.stats.pctPositive >= 90 ? <Crown className="h-8 w-8 text-yellow-500" /> :
+                       data.stats.pctPositive >= 80 ? <Sparkles className="h-8 w-8 text-cyan-400" /> :
+                       data.stats.pctPositive >= 70 ? <ThumbsUp className="h-8 w-8 text-green-500" /> :
+                       data.stats.pctPositive >= 60 ? <Meh className="h-8 w-8 text-amber-500" /> :
+                       data.stats.pctPositive >= 40 ? <ThumbsDown className="h-8 w-8 text-orange-500" /> :
+                       <AlertTriangle className="h-8 w-8 text-red-500" />
+                      }
+                      <span className="text-3xl font-mono font-bold tracking-tighter text-primary tabular-nums leading-none">
+                        {data.stats.pctPositive}
+                      </span>
+                      <span className="text-lg font-mono font-bold text-primary/70 leading-none">%</span>
+                    </div>
+                    
+                    {/* Progress bar */}
+                    <div className="w-full h-1 bg-secondary/30 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-primary to-primary/70 transition-all duration-500"
+                        style={{ width: `${data.stats.pctPositive}%` }}
+                      ></div>
+                    </div>
                   </div>
                 </div>
               </div>
