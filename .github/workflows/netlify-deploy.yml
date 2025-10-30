@@ -1,0 +1,36 @@
+# This workflow is optional - Netlify will auto-deploy on push
+# Use this if you want to run tests before deployment
+
+name: Netlify Deploy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run linter
+      run: npm run lint
+    
+    - name: Build project
+      run: npm run build
+      env:
+        DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
+        REDIS_URL: redis://localhost:6379
+
