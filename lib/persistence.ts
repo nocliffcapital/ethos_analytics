@@ -158,7 +158,7 @@ export async function getReviews(
   let sql = `SELECT id, userkey, score, body, created_at, author_userkey, net_votes, raw
              FROM reviews
              WHERE userkey = $1`;
-  const params: any[] = [userkey];
+  const params: unknown[] = [userkey];
 
   if (score) {
     params.push(score);
@@ -176,7 +176,7 @@ export async function getReviews(
     created_at: string;
     author_userkey: string | null;
     net_votes: number | null;
-    raw: any;
+    raw: Record<string, unknown>;
   }>(sql, params);
 
   return rows.map((row) => ({
@@ -201,10 +201,10 @@ export async function upsertAggregate(
   agg: AggregateData,
   summary: {
     summary: string;
-    positives: any[];
-    negatives: any[];
-    stats: any;
-    outliers: any[];
+    positives: Array<{ term: string; weight: number }>;
+    negatives: Array<{ term: string; weight: number }>;
+    stats: Record<string, unknown>;
+    outliers: Array<{ id: string; reason: string }>;
   }
 ): Promise<void> {
   await query(

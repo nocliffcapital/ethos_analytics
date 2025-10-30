@@ -9,7 +9,7 @@ interface LogEntry {
   timestamp: string;
   level: LogLevel;
   message: string;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
   error?: {
     name: string;
     message: string;
@@ -24,7 +24,7 @@ class Logger {
     this.env = process.env.NODE_ENV || "development";
   }
 
-  private log(level: LogLevel, message: string, context?: Record<string, any>, error?: Error) {
+  private log(level: LogLevel, message: string, context?: Record<string, unknown>, error?: Error) {
     const entry: LogEntry = {
       timestamp: new Date().toISOString(),
       level,
@@ -53,19 +53,19 @@ class Logger {
     }
   }
 
-  debug(message: string, context?: Record<string, any>) {
+  debug(message: string, context?: Record<string, unknown>) {
     this.log("debug", message, context);
   }
 
-  info(message: string, context?: Record<string, any>) {
+  info(message: string, context?: Record<string, unknown>) {
     this.log("info", message, context);
   }
 
-  warn(message: string, context?: Record<string, any>) {
+  warn(message: string, context?: Record<string, unknown>) {
     this.log("warn", message, context);
   }
 
-  error(message: string, error?: Error, context?: Record<string, any>) {
+  error(message: string, error?: Error, context?: Record<string, unknown>) {
     this.log("error", message, context, error);
   }
 }
