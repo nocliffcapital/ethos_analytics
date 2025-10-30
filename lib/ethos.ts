@@ -41,7 +41,7 @@ export type EthosReview = {
     upvotes: number;
     downvotes: number;
   };
-  raw: any;
+  raw: Record<string, unknown>;
 };
 
 export type EthosReply = {
@@ -49,7 +49,7 @@ export type EthosReply = {
   content: string;
   author: string;
   createdAt: string;
-  raw: any;
+  raw: Record<string, unknown>;
 };
 
 /**
@@ -277,7 +277,7 @@ async function fetchReviewsPage(
   userkey: string,
   score?: ReviewScore,
   offset = 0
-): Promise<any[]> {
+): Promise<unknown[]> {
   // Build query parameters for GET request
   const params = new URLSearchParams({
     userkey,
@@ -330,7 +330,7 @@ export async function fetchAllReviews(
         
         if (page.length === 0) break;
 
-        const reviews: EthosReview[] = page.map((item: any) => {
+        const reviews: EthosReview[] = page.map((item: Record<string, unknown>) => {
           // Extract data from the activity structure
           const reviewData = item.data || item;
           const timestamp = item.timestamp || reviewData.createdAt || item.createdAt;
@@ -390,7 +390,7 @@ export async function fetchReplies(reviewId: string): Promise<EthosReply[]> {
     const data = await response.json();
     const items = Array.isArray(data) ? data : data.values || [];
 
-    return items.map((item: any) => ({
+    return items.map((item: Record<string, unknown>) => ({
       id: item.id || `reply-${reviewId}-${Math.random()}`,
       content: item.content || item.body || item.comment || "",
       author: item.author || item.authorUserkey || "unknown",
@@ -456,8 +456,8 @@ export async function fetchVouches(userkey: string): Promise<number> {
       console.log(`[fetchVouches] Found ${data.values.length} vouch entries`);
       
       // Sum up all the balance amounts from vouches
-      const totalVouches = data.values.reduce((sum: number, vouch: any) => {
-        const balance = parseFloat(vouch.balance || 0);
+      const totalVouches = data.values.reduce((sum: number, vouch: Record<string, unknown>) => {
+        const balance = parseFloat((vouch.balance as string) || "0");
         console.log(`[fetchVouches] Vouch balance: ${balance}`);
         return sum + balance;
       }, 0);
@@ -554,17 +554,23 @@ export async function fetchTrendingUsers(limit: number = 5): Promise<TrendingUse
     // Map to simplified format
     const trendingUsers: TrendingUser[] = data.values
       .slice(0, limit)
-      .map((item: any) => ({
-        username: item.user.username || item.user.displayName,
-        displayName: item.user.displayName || item.user.username,
-        avatarUrl: item.user.avatarUrl,
-        score: item.user.score || 0,
-        userkey: item.user.userkeys?.[0] || "",
-        positiveReviewPercentage: Math.round(item.stats?.reviews?.positiveReviewPercentage || 0),
-        positiveReviewCount: item.stats?.reviews?.positiveReviewCount || 0,
-        negativeReviewCount: item.stats?.reviews?.negativeReviewCount || 0,
-        totalReviewCount: item.stats?.reviews?.received || 0,
-      }))
+      .map((item: Record<string, unknown>) => {
+        const user = item.user as Record<string, unknown>;
+        const stats = item.stats as Record<string, unknown> | undefined;
+        const reviews = stats?.reviews as Record<string, unknown> | undefined;
+        
+        return {
+          username: (user.username as string) || (user.displayName as string),
+          displayName: (user.displayName as string) || (user.username as string),
+          avatarUrl: user.avatarUrl as string,
+          score: (user.score as number) || 0,
+          userkey: ((user.userkeys as string[])?.[0]) || "",
+          positiveReviewPercentage: Math.round((reviews?.positiveReviewPercentage as number) || 0),
+          positiveReviewCount: (reviews?.positiveReviewCount as number) || 0,
+          negativeReviewCount: (reviews?.negativeReviewCount as number) || 0,
+          totalReviewCount: (reviews?.received as number) || 0,
+        };
+      })
       .filter((user: TrendingUser) => user.userkey && user.totalReviewCount > 0);
 
     return trendingUsers;

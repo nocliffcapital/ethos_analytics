@@ -19,7 +19,7 @@ export function getRedis(): Redis {
   return redis;
 }
 
-export async function getCached<T = any>(key: string): Promise<T | null> {
+export async function getCached<T = Record<string, unknown>>(key: string): Promise<T | null> {
   try {
     const redis = getRedis();
     const data = await redis.get(key);
@@ -33,7 +33,7 @@ export async function getCached<T = any>(key: string): Promise<T | null> {
 
 export async function setCached(
   key: string,
-  value: any,
+  value: unknown,
   ttlSeconds?: number
 ): Promise<void> {
   try {

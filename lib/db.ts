@@ -7,7 +7,7 @@ const pool = new Pool({
   connectionTimeoutMillis: 2000,
 });
 
-export async function query<T = any>(text: string, params?: any[]): Promise<T[]> {
+export async function query<T = Record<string, unknown>>(text: string, params?: unknown[]): Promise<T[]> {
   const start = Date.now();
   const res = await pool.query(text, params);
   const duration = Date.now() - start;

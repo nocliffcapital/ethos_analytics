@@ -3,7 +3,7 @@
  * Run this separately: node --loader ts-node/esm worker.ts
  */
 
-import { createIngestWorker, IngestJobData } from "./lib/queue";
+import { createIngestWorker } from "./lib/queue";
 import { fetchAllReviews } from "./lib/ethos";
 import { aggregate } from "./lib/aggregate";
 import { summarize } from "./lib/summarize";

@@ -1,5 +1,4 @@
 import { Queue, Worker, Job } from "bullmq";
-import { getRedis } from "./cache";
 
 const connection = {
   host: process.env.REDIS_URL?.includes("://")
