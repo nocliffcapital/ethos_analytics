@@ -201,10 +201,10 @@ export async function upsertAggregate(
   agg: AggregateData,
   summary: {
     summary: string;
-    positives: Array<{ term: string; weight: number }>;
-    negatives: Array<{ term: string; weight: number }>;
+    positives: Array<{ theme: string; evidence: string[] }>;
+    negatives: Array<{ theme: string; evidence: string[] }>;
     stats: Record<string, unknown>;
-    outliers: Array<{ id: string; reason: string }>;
+    outliers?: Array<{ reviewId: string; why: string }>;
   }
 ): Promise<void> {
   await query(
@@ -227,7 +227,7 @@ export async function upsertAggregate(
         positives: agg.positives.examples,
         negatives: agg.negatives.examples,
       }),
-      JSON.stringify(summary.outliers),
+      JSON.stringify(summary.outliers || agg.outliers),
       summary.summary,
     ]
   );

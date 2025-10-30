@@ -330,29 +330,34 @@ export async function fetchAllReviews(
         
         if (page.length === 0) break;
 
-        const reviews: EthosReview[] = page.map((item: Record<string, unknown>) => {
+        const reviews: EthosReview[] = (page as Array<Record<string, unknown>>).map((item) => {
           // Extract data from the activity structure
-          const reviewData = item.data || item;
+          const reviewData = (item.data as Record<string, unknown>) || item;
           const timestamp = item.timestamp || reviewData.createdAt || item.createdAt;
           
           // Extract author Twitter if available
-          const authorTwitter = item.author?.username || 
-                                item.author?.twitter || 
-                                item.author?.primaryTwitterProfile?.username;
+          const author = item.author as Record<string, unknown> | undefined;
+          const subject = item.subject as Record<string, unknown> | undefined;
+          const votes = item.votes as Record<string, unknown> | undefined;
+          const primaryTwitterProfile = author?.primaryTwitterProfile as Record<string, unknown> | undefined;
+          
+          const authorTwitter = author?.username || 
+                                author?.twitter || 
+                                primaryTwitterProfile?.username;
           
           return {
-            id: reviewData.id || item.id || `${userkey}-${offset}-${Math.random()}`,
+            id: (reviewData.id as string) || (item.id as string) || `${userkey}-${offset}-${Math.random()}`,
             score,
-            subject: item.subject?.userkey || reviewData.subject || userkey,
-            author: item.author?.userkey || reviewData.author || "unknown",
-            authorTwitter: authorTwitter || undefined,
-            comment: reviewData.comment || reviewData.body || reviewData.content,
+            subject: (subject?.userkey as string) || (reviewData.subject as string) || userkey,
+            author: (author?.userkey as string) || (reviewData.author as string) || "unknown",
+            authorTwitter: authorTwitter as string | undefined,
+            comment: (reviewData.comment as string) || (reviewData.body as string) || (reviewData.content as string),
             createdAt: typeof timestamp === 'number' 
               ? new Date(timestamp * 1000).toISOString() 
-              : timestamp || new Date().toISOString(),
-            votes: item.votes ? {
-              upvotes: item.votes.upvotes || 0,
-              downvotes: item.votes.downvotes || 0,
+              : (timestamp as string) || new Date().toISOString(),
+            votes: votes ? {
+              upvotes: (votes.upvotes as number) || 0,
+              downvotes: (votes.downvotes as number) || 0,
             } : undefined,
             raw: item,
           };
