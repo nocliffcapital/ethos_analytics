@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState, useEffect, useMemo } from "react";
+import { use, useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -121,19 +121,30 @@ export default function SummaryPage(props: PageProps) {
     gcTime: 5 * 60 * 1000, // Keep in memory for 5 minutes only
   });
 
-  // Calculate refresh timing (memoized to avoid impure Date.now() calls during render)
-  const refreshInfo = useMemo(() => {
-    if (!data?.lastUpdated) {
-      return { canRefresh: true, hoursRemaining: 0 };
-    }
-    const lastUpdate = new Date(data.lastUpdated).getTime();
-    const now = Date.now();
-    const hoursSinceUpdate = (now - lastUpdate) / (1000 * 60 * 60);
-    const hoursRemaining = Math.ceil(24 - hoursSinceUpdate);
-    return {
-      canRefresh: hoursSinceUpdate >= 24,
-      hoursRemaining: Math.max(0, hoursRemaining),
+  // Calculate refresh timing using state to avoid impure Date.now() calls during render
+  const [refreshInfo, setRefreshInfo] = useState({ canRefresh: true, hoursRemaining: 0 });
+  
+  useEffect(() => {
+    const updateRefreshInfo = () => {
+      if (!data?.lastUpdated) {
+        setRefreshInfo({ canRefresh: true, hoursRemaining: 0 });
+        return;
+      }
+      const lastUpdate = new Date(data.lastUpdated).getTime();
+      const now = Date.now();
+      const hoursSinceUpdate = (now - lastUpdate) / (1000 * 60 * 60);
+      const hoursRemaining = Math.ceil(24 - hoursSinceUpdate);
+      setRefreshInfo({
+        canRefresh: hoursSinceUpdate >= 24,
+        hoursRemaining: Math.max(0, hoursRemaining),
+      });
     };
+    
+    updateRefreshInfo();
+    
+    // Update every minute to keep the countdown fresh
+    const interval = setInterval(updateRefreshInfo, 60000);
+    return () => clearInterval(interval);
   }, [data?.lastUpdated]);
 
   const handleRefresh = async () => {

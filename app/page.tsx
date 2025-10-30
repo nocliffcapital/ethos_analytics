@@ -531,16 +531,14 @@ export default function Home() {
 
 // Settings Modal Component
 function SettingsModal({ onClose }: { onClose: () => void }) {
-  const [apiKey, setApiKey] = useState("");
-  const [saved, setSaved] = useState(false);
-
-  useEffect(() => {
-    // Load saved API key from localStorage
-    const savedKey = localStorage.getItem("user_openai_key");
-    if (savedKey) {
-      setApiKey(savedKey);
+  // Initialize state with lazy initialization to avoid setState in effect
+  const [apiKey, setApiKey] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem("user_openai_key") || "";
     }
-  }, []);
+    return "";
+  });
+  const [saved, setSaved] = useState(false);
 
   const handleSave = () => {
     if (apiKey.trim()) {
