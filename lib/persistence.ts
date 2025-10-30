@@ -236,8 +236,25 @@ export async function upsertAggregate(
 /**
  * Get aggregate data
  */
-export async function getAggregate(userkey: string): Promise<any | null> {
-  const rows = await query(
+export async function getAggregate(userkey: string): Promise<{
+  userkey: string;
+  counts: Record<string, unknown>;
+  timeline: Record<string, unknown>;
+  themes: Record<string, unknown>;
+  quotes: Record<string, unknown>;
+  outliers: Record<string, unknown>;
+  summary: string;
+  lastUpdated: string;
+} | null> {
+  const rows = await query<{
+    counts: Record<string, unknown>;
+    timeline: Record<string, unknown>;
+    themes: Record<string, unknown>;
+    quotes: Record<string, unknown>;
+    outliers: Record<string, unknown>;
+    summary: string;
+    updated_at: string;
+  }>(
     `SELECT counts, timeline, themes, quotes, outliers, summary, updated_at
      FROM aggregates
      WHERE userkey = $1`,

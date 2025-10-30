@@ -4,7 +4,7 @@
  */
 
 type CachedSummary = {
-  data: any;
+  data: Record<string, unknown>;
   timestamp: number;
   expiresAt: number;
 };
@@ -15,7 +15,7 @@ const cache = new Map<string, CachedSummary>();
 // 24 hours in milliseconds
 const CACHE_DURATION = 24 * 60 * 60 * 1000;
 
-export function getCachedSummary(userkey: string): any | null {
+export function getCachedSummary(userkey: string): Record<string, unknown> | null {
   const cached = cache.get(userkey);
   
   if (!cached) {
@@ -36,7 +36,7 @@ export function getCachedSummary(userkey: string): any | null {
   return null;
 }
 
-export function setCachedSummary(userkey: string, data: any): void {
+export function setCachedSummary(userkey: string, data: Record<string, unknown>): void {
   const now = Date.now();
   const expiresAt = now + CACHE_DURATION;
   
