@@ -504,7 +504,7 @@ export default function Home() {
                 ETHOS_NETWORK
               </a>
               <span className="text-primary/30">|</span>
-              <a href="https://github.com/nocliffcapital/ethosanalytics" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors uppercase tracking-wide">
+              <a href="https://github.com/nocliffcapital/ethos_analytics" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors uppercase tracking-wide">
                 GITHUB
               </a>
               <span className="text-primary/30">|</span>

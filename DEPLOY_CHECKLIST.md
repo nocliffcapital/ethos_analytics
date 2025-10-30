@@ -34,7 +34,7 @@ git init
 git add .
 git commit -m "Deploy to Netlify"
 git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/ethos_analytics.git
+git remote add origin https://github.com/nocliffcapital/ethos_analytics.git
 git push -u origin main
 ```
 

@@ -555,8 +555,8 @@ export default function DocsPage() {
               <div>
                 <h3 className="text-sm font-bold text-foreground mb-2 uppercase tracking-wide">1. Clone the Repository</h3>
                 <div className="bg-black/30 rounded-lg p-3 font-mono text-xs text-success border border-success/20">
-                  git clone https://github.com/nocliffcapital/ethosanalytics.git<br />
-                  cd ethosanalytics
+                  git clone https://github.com/nocliffcapital/ethos_analytics.git<br />
+                  cd ethos_analytics
                 </div>
               </div>
 
@@ -609,7 +609,7 @@ export default function DocsPage() {
                 ETHOS_NETWORK
               </a>
               <span className="text-primary/30">|</span>
-              <a href="https://github.com/nocliffcapital/ethosanalytics" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors uppercase tracking-wide">
+              <a href="https://github.com/nocliffcapital/ethos_analytics" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors uppercase tracking-wide">
                 GITHUB
               </a>
               <span className="text-primary/30">|</span>
