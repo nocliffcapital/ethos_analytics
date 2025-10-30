@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -344,9 +345,11 @@ export default function Home() {
                       {/* Avatar and Name */}
                       <div className="flex items-center gap-2 mb-2">
                         {user.avatarUrl ? (
-                          <img
+                          <Image
                             src={user.avatarUrl}
                             alt={user.displayName}
+                            width={32}
+                            height={32}
                             className="w-8 h-8 rounded-full border border-primary/30"
                           />
                         ) : (
@@ -428,9 +431,11 @@ export default function Home() {
                       {/* Avatar and Name */}
                       <div className="flex items-center gap-2 mb-2">
                         {user.avatarUrl ? (
-                          <img
+                          <Image
                             src={user.avatarUrl}
                             alt={user.displayName}
+                            width={32}
+                            height={32}
                             className="w-8 h-8 rounded-full border border-primary/30"
                           />
                         ) : (

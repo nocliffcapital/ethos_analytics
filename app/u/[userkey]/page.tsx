@@ -3,6 +3,7 @@
 import { use, useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -370,9 +371,11 @@ export default function SummaryPage(props: PageProps) {
                   <div className="flex items-center gap-2.5 mb-1">
                     {/* Profile Avatar */}
                     {data.profile?.avatarUrl ? (
-                      <img
+                      <Image
                         src={data.profile.avatarUrl}
                         alt={data.profile.displayName || "Profile"}
+                        width={40}
+                        height={40}
                         className="w-10 h-10 rounded-full border-2 border-primary/30 shadow-lg flex-shrink-0"
                       />
                     ) : (
