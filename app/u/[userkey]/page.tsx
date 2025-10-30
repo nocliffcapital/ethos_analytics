@@ -24,22 +24,28 @@ export default function SummaryPage(props: PageProps) {
 
   // Animated loading messages
   const loadingMessages = [
-    "Initializing scan...",
-    "Fetching raw data...",
-    "Analyzing sentiment...",
-    "Checking timeline...",
-    "Computing stats...",
-    "Detecting spikes...",
-    "Generating insights...",
-    "Building charts...",
-    "Finalizing...",
+    "Initializing reputation scan...",
+    "Connecting to Ethos Network...",
+    "Fetching review data...",
+    "Processing reviews...",
+    "Analyzing sentiment patterns...",
+    "Computing statistics...",
+    "Building timeline...",
+    "Extracting keywords...",
+    "Detecting trends...",
+    "Identifying outliers...",
+    "Generating AI summary...",
+    "Compiling insights...",
+    "Organizing data...",
+    "Finalizing report...",
+    "Almost ready...",
   ];
 
-  // Cycle through loading messages
+  // Cycle through loading messages (15 messages * ~1.33s = ~20 seconds)
   useEffect(() => {
     const interval = setInterval(() => {
       setLoadingMessage((prev) => (prev + 1) % loadingMessages.length);
-    }, 1500); // Change message every 1.5 seconds
+    }, 1333); // Change message every ~1.33 seconds for 20 second total loop
 
     return () => clearInterval(interval);
   }, []);
@@ -171,72 +177,31 @@ export default function SummaryPage(props: PageProps) {
             
             <CardContent className="pt-12 pb-12 relative">
               <div className="text-center">
-                {/* Advanced spinning loader */}
+                {/* Simple single spinner */}
                 <div className="relative mb-8 flex justify-center">
-                  {/* Outer orbital rings */}
-                  <div className="absolute w-32 h-32 rounded-full border border-primary/10 animate-spin" style={{ animationDuration: '4s' }}></div>
-                  <div className="absolute w-28 h-28 rounded-full border border-primary/20 animate-spin" style={{ animationDuration: '3s', animationDirection: 'reverse' }}></div>
-                  
-                  {/* Main loader container */}
-                  <div className="relative w-24 h-24">
-                    {/* Rotating gradient ring */}
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-primary via-blue-400 to-transparent animate-spin opacity-50"></div>
-                    
-                    {/* Inner content */}
-                    <div className="absolute inset-1 rounded-full bg-card flex items-center justify-center border-2 border-primary/30">
-                      {/* Multiple rotating rings */}
-                      <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-primary border-r-primary animate-spin"></div>
-                      <div className="absolute inset-2 rounded-full border-2 border-transparent border-b-primary/60 border-l-primary/60 animate-spin" style={{ animationDuration: '2s' }}></div>
-                      
-                      {/* Center icon with pulse */}
-                      <Loader2 className="h-10 w-10 text-primary animate-spin relative z-10" style={{ animationDuration: '1.5s' }} />
-                    </div>
-                    
-                    {/* Pulsing glow behind */}
-                    <div className="absolute inset-0 flex items-center justify-center -z-10">
-                      <div className="w-32 h-32 rounded-full bg-primary/20 blur-2xl animate-pulse"></div>
-                    </div>
-                  </div>
+                  <Loader2 className="h-16 w-16 text-primary animate-spin" />
                 </div>
 
-                {/* Loading text with enhanced animation */}
+                {/* Loading text with animation */}
                 <div className="space-y-4">
-                  <div className="relative">
-                    {/* Decorative lines */}
-                    <div className="absolute top-1/2 left-0 right-0 -translate-y-1/2 flex items-center justify-center gap-2 -z-10">
-                      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
-                    </div>
-                    
-                    <h2 
-                      key={loadingMessage}
-                      className="text-lg font-bold text-primary uppercase tracking-wide font-mono animate-in fade-in slide-in-from-bottom-2 duration-500 px-4 bg-card/50 backdrop-blur-sm inline-block rounded"
-                    >
-                      {loadingMessages[loadingMessage]}
-                    </h2>
-                  </div>
+                  <h2 
+                    key={loadingMessage}
+                    className="text-lg font-bold text-primary uppercase tracking-wide font-mono animate-in fade-in slide-in-from-bottom-2 duration-500"
+                  >
+                    {loadingMessages[loadingMessage]}
+                  </h2>
                   
-                  {/* Enhanced progress indicators */}
-                  <div className="flex items-center justify-center gap-2.5 py-2">
+                  {/* Simple progress dots */}
+                  <div className="flex items-center justify-center gap-2 py-2">
                     {[...Array(5)].map((_, i) => (
                       <div
                         key={i}
-                        className="relative"
-                      >
-                        <div
-                          className="w-2 h-2 rounded-full bg-primary/40 relative z-10"
-                          style={{
-                            animation: `pulse 1.5s ease-in-out infinite`,
-                            animationDelay: `${i * 0.15}s`
-                          }}
-                        />
-                        <div
-                          className="absolute inset-0 w-2 h-2 rounded-full bg-primary/20 blur-sm"
-                          style={{
-                            animation: `pulse 1.5s ease-in-out infinite`,
-                            animationDelay: `${i * 0.15}s`
-                          }}
-                        />
-                      </div>
+                        className="w-2 h-2 rounded-full bg-primary/40"
+                        style={{
+                          animation: `pulse 1.5s ease-in-out infinite`,
+                          animationDelay: `${i * 0.15}s`
+                        }}
+                      />
                     ))}
                   </div>
 
@@ -373,23 +338,23 @@ export default function SummaryPage(props: PageProps) {
             <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-primary/40 rounded-br-lg"></div>
             
             <CardHeader className="border-b border-primary/20 relative pb-3 backdrop-blur-sm">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
+              <div className="flex flex-col sm:flex-row items-start justify-between gap-3 sm:gap-4">
+                <div className="flex-1 w-full sm:w-auto min-w-0">
                   <div className="flex items-center gap-2.5 mb-1">
                     {/* Profile Avatar */}
                     {data.profile?.avatarUrl ? (
                       <img
                         src={data.profile.avatarUrl}
                         alt={data.profile.displayName || "Profile"}
-                        className="w-10 h-10 rounded-full border-2 border-primary/30 shadow-lg"
+                        className="w-10 h-10 rounded-full border-2 border-primary/30 shadow-lg flex-shrink-0"
                       />
                     ) : (
-                      <div className="p-1.5 bg-primary/10 rounded-lg border border-primary/30">
+                      <div className="p-1.5 bg-primary/10 rounded-lg border border-primary/30 flex-shrink-0">
                         <Award className="h-4 w-4 text-primary" />
                       </div>
                     )}
-                    <div className="flex-1">
-                      <CardTitle className="text-lg font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-foreground/80 bg-clip-text text-transparent uppercase">
+                    <div className="flex-1 min-w-0">
+                      <CardTitle className="text-base sm:text-lg font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-foreground/80 bg-clip-text text-transparent uppercase truncate">
                         {data.profile?.twitter 
                           ? `@${data.profile.twitter}'s Reputation`
                           : data.profile?.displayName 
@@ -406,7 +371,7 @@ export default function SummaryPage(props: PageProps) {
                   
                   {/* External Links Icons */}
                   {data.profile && (
-                    <div className="flex items-center gap-2 mt-2">
+                    <div className="flex items-center gap-2 mt-2 flex-wrap">
                       {/* Twitter Link */}
                       {data.profile.twitter && (
                         <a
@@ -459,18 +424,18 @@ export default function SummaryPage(props: PageProps) {
                     </div>
                   )}
                 </div>
-                <div className="text-right">
+                <div className="text-left sm:text-right w-full sm:w-auto">
                   <div className="relative inline-block">
-                    <div className="flex items-center gap-3 justify-end mb-1">
-                      <div className="text-4xl font-black tracking-tighter bg-gradient-to-br from-primary via-primary to-primary/70 bg-clip-text text-transparent tabular-nums">
+                    <div className="flex items-center gap-2 sm:gap-3 justify-start sm:justify-end mb-1">
+                      <div className="text-3xl sm:text-4xl font-black tracking-tighter bg-gradient-to-br from-primary via-primary to-primary/70 bg-clip-text text-transparent tabular-nums">
                         {data.stats.pctPositive}%
                       </div>
-                      {data.stats.pctPositive >= 90 ? <Crown className="h-7 w-7 text-primary" /> :
-                       data.stats.pctPositive >= 80 ? <Sparkles className="h-7 w-7 text-primary" /> :
-                       data.stats.pctPositive >= 70 ? <ThumbsUp className="h-7 w-7 text-primary" /> :
-                       data.stats.pctPositive >= 60 ? <Meh className="h-7 w-7 text-primary" /> :
-                       data.stats.pctPositive >= 40 ? <ThumbsDown className="h-7 w-7 text-primary" /> :
-                       <AlertTriangle className="h-7 w-7 text-primary" />
+                      {data.stats.pctPositive >= 90 ? <Crown className="h-6 w-6 sm:h-7 sm:w-7 text-primary" /> :
+                       data.stats.pctPositive >= 80 ? <Sparkles className="h-6 w-6 sm:h-7 sm:w-7 text-primary" /> :
+                       data.stats.pctPositive >= 70 ? <ThumbsUp className="h-6 w-6 sm:h-7 sm:w-7 text-primary" /> :
+                       data.stats.pctPositive >= 60 ? <Meh className="h-6 w-6 sm:h-7 sm:w-7 text-primary" /> :
+                       data.stats.pctPositive >= 40 ? <ThumbsDown className="h-6 w-6 sm:h-7 sm:w-7 text-primary" /> :
+                       <AlertTriangle className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
                       }
                     </div>
                     <div className="absolute -inset-1 bg-primary/20 blur-xl rounded-full -z-10"></div>
@@ -481,16 +446,16 @@ export default function SummaryPage(props: PageProps) {
             <CardContent className="pt-3 pb-1 relative">
               <p className="text-sm leading-relaxed text-foreground/90 font-normal mb-0">{data.summary}</p>
               
-              <div className="flex items-center justify-between gap-2 pt-1 mt-1 border-t border-border text-[10px] text-muted-foreground font-mono">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-1 mt-1 border-t border-border text-[10px] text-muted-foreground font-mono">
                 <div className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></div>
-                  <span>
+                  <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse flex-shrink-0"></div>
+                  <span className="truncate">
                     CACHED: {data.lastUpdated ? new Date(data.lastUpdated).toLocaleString() : 'Just now'}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 text-primary/80">
-                  <Clock className="h-3 w-3" />
-                  <span>Refresh in {data.lastUpdated ? Math.ceil(24 - (Date.now() - new Date(data.lastUpdated).getTime()) / (1000 * 60 * 60)) : 24}h</span>
+                  <Clock className="h-3 w-3 flex-shrink-0" />
+                  <span className="whitespace-nowrap">Refresh in {data.lastUpdated ? Math.ceil(24 - (Date.now() - new Date(data.lastUpdated).getTime()) / (1000 * 60 * 60)) : 24}h</span>
                 </div>
               </div>
             </CardContent>
