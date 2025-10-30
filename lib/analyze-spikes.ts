@@ -37,6 +37,7 @@ Output format (JSON):
 async function analyzeSingleSpike(
   spike: TimelineSpike,
   profileName: string,
+  previousAnalyses: string[],
   apiKey?: string
 ): Promise<{ analysis: string }> {
   // Check if OpenAI is configured
@@ -98,23 +99,41 @@ async function analyzeSingleSpike(
       typeInstruction = "\n⚖️ This is a MIXED spike. Your analysis should acknowledge both positive and negative aspects.";
     }
     
+    // Add anti-repetition context if there are previous analyses
+    let antiRepetitionContext = "";
+    if (previousAnalyses.length > 0) {
+      antiRepetitionContext = `
+
+⚠️ IMPORTANT - AVOID REPETITION:
+You have already analyzed other spike months. Your previous analyses were:
+${previousAnalyses.map((a, i) => `${i + 1}. "${a}"`).join("\n")}
+
+For THIS month (${monthName}), you MUST:
+- Identify UNIQUE aspects, themes, or issues specific to THIS period
+- Focus on what makes THIS spike DIFFERENT from the others
+- Use DIFFERENT wording and structure than your previous analyses
+- If the same general event caused multiple spikes, focus on THIS month's specific angle or development
+- DO NOT repeat the same phrases, themes, or reasons you've already mentioned`;
+    }
+    
     const prompt = `Analyze this review spike for ${profileName}:
 
 TIME PERIOD: ${monthName}
 SPIKE TYPE: ${spike.type.toUpperCase()}
 MAGNITUDE: ${spike.reviewCount} reviews (${spike.magnitude}x the average of ${spike.avgReviewCount})
-SENTIMENT BREAKDOWN: ${posCount} positive, ${negCount} negative, ${neuCount} neutral${typeInstruction}
+SENTIMENT BREAKDOWN: ${posCount} positive, ${negCount} negative, ${neuCount} neutral${typeInstruction}${antiRepetitionContext}
 
 REVIEWS FROM THIS PERIOD:
 ${reviewTexts.join("\n")}
 
 Determine:
 1. What event, action, or circumstance triggered this spike in reviews?
-2. What specific allegations, criticisms, or praises were mentioned?
-3. CRITICAL: Your tone and focus must match the spike type (${spike.type.toUpperCase()}).
+2. What specific allegations, criticisms, or praises were mentioned UNIQUE TO THIS MONTH?
+3. What makes THIS month's spike distinct from other periods?
+4. CRITICAL: Your tone and focus must match the spike type (${spike.type.toUpperCase()}).
 
 Generate JSON with:
-- analysis: Detailed 3-4 sentence explanation (up to 400 characters) that accurately reflects the ${spike.type} sentiment. Be specific about what happened and what reviewers said.`;
+- analysis: Detailed 3-4 sentence explanation (up to 400 characters) that accurately reflects the ${spike.type} sentiment. Be specific about what happened in THIS SPECIFIC MONTH and avoid repeating previous analyses.`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-5-nano",
@@ -161,12 +180,13 @@ export async function analyzeSpikes(
 
   console.log(`[AnalyzeSpikes] Analyzing ${spikes.length} spike(s) with ${userApiKey ? 'user' : 'system'} API key`);
 
-  // Analyze each spike
+  // Analyze each spike sequentially, passing previous analyses for context
   const insights: SpikeInsight[] = [];
+  const previousAnalyses: string[] = [];
 
   for (const spike of spikes) {
     try {
-      const { analysis } = await analyzeSingleSpike(spike, profileName, apiKey);
+      const { analysis } = await analyzeSingleSpike(spike, profileName, previousAnalyses, apiKey);
       
       insights.push({
         month: spike.month,
@@ -175,6 +195,9 @@ export async function analyzeSpikes(
         reviewCount: spike.reviewCount,
         analysis,
       });
+
+      // Add this analysis to the context for next iterations
+      previousAnalyses.push(analysis);
     } catch (error) {
       console.error(`Failed to analyze spike ${spike.month}:`, error);
     }

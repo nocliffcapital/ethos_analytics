@@ -12,8 +12,8 @@ type SummaryOutput = {
   negativeSummary: string; // Full summary of all negative reviews
   positiveNotes: string; // Short 1-sentence positive highlight (for backwards compatibility)
   negativeNotes: string; // Short 1-sentence negative highlight (for backwards compatibility)
-  positiveThemes: string[]; // 3-6 keyword badges
-  negativeThemes: string[]; // 2-4 keyword badges
+  positiveThemes: string[]; // Up to 5 keyword badges
+  negativeThemes: string[]; // Up to 5 keyword badges
   positives: Array<{ theme: string; evidence: string[] }>;
   negatives: Array<{ theme: string; evidence: string[] }>;
   stats: {
@@ -43,8 +43,8 @@ Output format (JSON):
   "negativeSummary": "2-3 sentence summary of all negative reviews and concerns (or 'No negative reviews.' if none). Use the person's actual name.",
   "positiveNotes": "1 sentence positive highlight",
   "negativeNotes": "1 sentence on concerns (or 'No significant concerns' if none)",
-  "positiveThemes": ["Theme1", "Theme2", "Theme3"], // 3-6 short keywords (2-3 words)
-  "negativeThemes": ["Issue1", "Issue2"] // 2-4 short keywords (or empty if none)
+  "positiveThemes": ["Theme1", "Theme2", "Theme3"], // Up to 5 short keywords (2-3 words)
+  "negativeThemes": ["Issue1", "Issue2"] // Up to 5 short keywords (or empty if none)
 }`;
 
 /**
@@ -105,7 +105,7 @@ function deterministicSummary(agg: AggregateData): SummaryOutput {
     positiveNotes: agg.counts.positive > 0 ? "Positive feedback received across multiple reviews." : "Limited positive feedback.",
     negativeNotes: agg.counts.negative > 0 ? "Some concerns raised in reviews." : "No significant concerns.",
     positiveThemes: positives.map(p => p.theme).slice(0, 5),
-    negativeThemes: negatives.map(n => n.theme).slice(0, 3),
+    negativeThemes: negatives.map(n => n.theme).slice(0, 5),
     positives,
     negatives,
     stats: {
@@ -202,8 +202,8 @@ Generate JSON with:
       negativeSummary: result.negativeSummary || (agg.counts.negative > 0 ? "Some concerns have been raised by reviewers." : "No negative reviews."),
       positiveNotes: result.positiveNotes || "Positive feedback received.",
       negativeNotes: result.negativeNotes || (agg.counts.negative > 0 ? "Some concerns raised." : "No significant concerns."),
-      positiveThemes: Array.isArray(result.positiveThemes) ? result.positiveThemes.slice(0, 6) : [],
-      negativeThemes: Array.isArray(result.negativeThemes) ? result.negativeThemes.slice(0, 4) : [],
+      positiveThemes: Array.isArray(result.positiveThemes) ? result.positiveThemes.slice(0, 5) : [],
+      negativeThemes: Array.isArray(result.negativeThemes) ? result.negativeThemes.slice(0, 5) : [],
       positives: agg.positives.keywords.slice(0, 3).map((kw, idx) => ({
         theme: kw.term.charAt(0).toUpperCase() + kw.term.slice(1),
         evidence:

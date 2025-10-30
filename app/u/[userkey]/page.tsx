@@ -612,15 +612,9 @@ export default function SummaryPage(props: PageProps) {
                     : 'bg-destructive/10 border border-destructive/30'
                 }`}>
                   {data.projectVotes.percentBullish > data.projectVotes.percentBearish ? (
-                    // Bull Icon
-                    <svg className="h-6 w-6 text-success" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2C10.9 2 10 2.9 10 4C10 4.7 10.4 5.4 11 5.7V7H8C6.9 7 6 7.9 6 9V11C6 12.1 6.9 13 8 13H11V17C11 18.7 9.7 20 8 20C7.4 20 7 20.4 7 21C7 21.6 7.4 22 8 22C10.8 22 13 19.8 13 17V13H16C17.1 13 18 12.1 18 11V9C18 7.9 17.1 7 16 7H13V5.7C13.6 5.4 14 4.7 14 4C14 2.9 13.1 2 12 2M8 9H11V11H8V9M13 9H16V11H13V9Z"/>
-                    </svg>
+                    <ThumbsUp className="h-6 w-6 text-success" />
                   ) : (
-                    // Bear Icon
-                    <svg className="h-6 w-6 text-destructive" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M7.5 2C6.67 2 6 2.67 6 3.5C6 3.71 6.04 3.91 6.12 4.1L3.23 6.99C2.84 7.38 2.84 8.01 3.23 8.4L4.64 9.81C5.03 10.2 5.66 10.2 6.05 9.81L7 8.86V11C7 12.1 7.9 13 9 13H11V17C11 18.7 9.7 20 8 20C7.45 20 7 20.45 7 21C7 21.55 7.45 22 8 22C10.76 22 13 19.76 13 17V13H15C16.1 13 17 12.1 17 11V8.86L17.95 9.81C18.34 10.2 18.97 10.2 19.36 9.81L20.77 8.4C21.16 8.01 21.16 7.38 20.77 6.99L17.88 4.1C17.96 3.91 18 3.71 18 3.5C18 2.67 17.33 2 16.5 2C15.67 2 15 2.67 15 3.5C15 3.71 15.04 3.91 15.12 4.1L12 7.22L8.88 4.1C8.96 3.91 9 3.71 9 3.5C9 2.67 8.33 2 7.5 2M9 9H11V11H9V9M13 9H15V11H13V9Z"/>
-                    </svg>
+                    <ThumbsDown className="h-6 w-6 text-destructive" />
                   )}
                 </div>
               </div>
@@ -630,7 +624,7 @@ export default function SummaryPage(props: PageProps) {
               <div className="flex items-center justify-between gap-8 mb-4">
                 {/* Bullish Section */}
                 <div className="flex items-center gap-3">
-                  <TrendingUp className="h-5 w-5 text-success" />
+                  <ThumbsUp className="h-5 w-5 text-success" />
                   <div>
                     <div className="text-2xl font-black text-success tabular-nums">
                       {data.projectVotes.percentBullish}%
@@ -657,7 +651,7 @@ export default function SummaryPage(props: PageProps) {
                     </div>
                     <div className="text-[10px] text-destructive/80 font-mono uppercase tracking-wide">bearish</div>
                   </div>
-                  <TrendingDown className="h-5 w-5 text-destructive" />
+                  <ThumbsDown className="h-5 w-5 text-destructive" />
                 </div>
               </div>
 
